@@ -14,6 +14,12 @@
       "version": "1.0.0"
     },
     {
+      "package": "CPostgreSQL",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor-community/cpostgresql.git",
+      "version": "2.0.0"
+    },
+    {
       "package": "CTLS",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/ctls.git",
@@ -53,7 +59,7 @@
       "package": "Fluent",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/fluent.git",
-      "version": "2.0.2"
+      "version": "2.0.3"
     },
     {
       "package": "FluentProvider",
@@ -77,7 +83,25 @@
       "package": "Node",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/node.git",
+      "version": "2.0.3"
+    },
+    {
+      "package": "PostgreSQL",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor-community/postgresql.git",
       "version": "2.0.1"
+    },
+    {
+      "package": "PostgreSQLDriver",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/postgresql-driver.git",
+      "version": "2.0.0"
+    },
+    {
+      "package": "PostgreSQLProvider",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor-community/postgresql-provider.git",
+      "version": "2.0.0"
     },
     {
       "package": "Random",
@@ -107,7 +131,19 @@
       "package": "TLS",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/tls.git",
-      "version": "2.0.3"
+      "version": "2.0.4"
+    },
+    {
+      "package": "Validation",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/validation.git",
+      "version": "1.0.1"
+    },
+    {
+      "package": "ValidationProvider",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/validation-provider.git",
+      "version": "1.1.0"
     },
     {
       "package": "Vapor",
