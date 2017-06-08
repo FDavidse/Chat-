@@ -48,82 +48,92 @@ final class ChatUser: Model {
 
     }
     
-    static func prepare(_ database: Database) throws {
-        try database.create("tilusers") { users in
-            users.id()
-            users.string("name")
-            users.string("email")
-            users.string("password")
-        }
-    }
     
-    static func revert(_ database: Database) throws {
-        try database.delete("tilusers")
-    }
-    
-    static func register(name: String, email: String, rawPassword: String) throws -> TILUser {
-        var newUser = try TILUser(name: name, email: email, rawPassword: rawPassword)
-        if try TILUser.query().filter("email", newUser.email.value).first() == nil {
+    static func register(name: String, email: String, rawPassword: String) throws -> ChatUser {
+        var newUser = try ChatUser(name: name, email: email, rawPassword: rawPassword)
+        if try ChatUser.makeQuery().filter("email", newUser.email).first() == nil {
             try newUser.save()
             return newUser
         } else {
-            throw AccountTakenError()
+//            throw Error
+            return newUser
         }
     }
     
 }
 
-extension TILUser {
-    func acronyms() throws -> [Acronym] {
-        return try children(nil, Acronym.self).all()
+extension ChatUser: RowRepresentable {
+    func makeRow() throws -> Row {
+        var row = Row()
+        try row.set("name", name)
+        try row.set("email", email)
+        try row.set("password", password)
+
+        return row
+    }
+}
+
+extension ChatUser: Preparation {
+    static func prepare(_ database: Database) throws {
+        try database.create(self, closure: { (group) in
+            group.id()
+            group.string("name")
+        })
     }
     
-    func groups() throws -> [Group] {
-        let groups: Siblings<Group> = try siblings()
-        return try groups.all()
+    static func revert(_ database: Database) throws {
+        try database.delete(self)
     }
+}
+
+extension ChatUser {
     
-    func messages() throws -> [Message] {
-        return try children(nil, Message.self).all()
-    }
+//    func groups() throws -> [Group] {
+//        let groups: Siblings<Group> = try siblings()
+//        return try groups.all()
+//    }
+//    
+//    func messages() throws -> [Message] {
+//        return try children(nil, Message.self).all()
+//    }
     
     
 }
 
-extension TILUser: Authenticator {
-    
-    static func authenticate(credentials: Credentials) throws -> User {
-        var user: TILUser?
-        
-        switch credentials {
-        case let credentials as UsernamePassword:
-            let fetchedUser = try TILUser.query()
-                .filter("email", credentials.username)
-                .first()
-            if let password = fetchedUser?.password,
-                password != "",
-                (try? BCrypt.verify(password: credentials.password, matchesHash: password)) == true {
-                user = fetchedUser
-            }
-        case let credentials as Identifier:
-            user = try TILUser.find(credentials.id)
-        default:
-            throw UnsupportedCredentialsError()
-        }
-        
-        if let user = user {
-            return user
-        } else {
-            throw IncorrectCredentialsError()
-        }
-        
-    }
-    
-    static func register(credentials: Credentials) throws -> User {
-        throw Abort.badRequest
-    }
-    
-    
-}
-
+//extension TILUser: Authenticator {
+//    
+//    static func authenticate(credentials: Credentials) throws -> User {
+//        var user: TILUser?
+//        
+//        switch credentials {
+//        case let credentials as UsernamePassword:
+//            let fetchedUser = try TILUser.query()
+//                .filter("email", credentials.username)
+//                .first()
+//            if let password = fetchedUser?.password,
+//                password != "",
+//                (try? BCrypt.verify(password: credentials.password, matchesHash: password)) == true {
+//                user = fetchedUser
+//            }
+//        case let credentials as Identifier:
+//            user = try TILUser.find(credentials.id)
+//        default:
+//            throw UnsupportedCredentialsError()
+//        }
+//        
+//        if let user = user {
+//            return user
+//        } else {
+//            throw IncorrectCredentialsError()
+//        }
+//        
+//    }
+//    
+//    static func register(credentials: Credentials) throws -> User {
+//        throw Abort.badRequest
+//    }
+//    
+//    
+//}
+//
 

@@ -58,12 +58,13 @@ final class Message: Model {
     }
     
     
-    static func addMessage(text: String, user: ChatUser?, group: Group?) throws -> Message {
-        var newMessage = try Message(messagetext: text, tiluserId: user?.id, chatgroupid: group?.id)
-        try newMessage.save()
-        return newMessage
-    }
-    
+//    static func addMessage(text: String, user: ChatUser?, group: Group?) throws -> Message {
+//        
+//        var newMessage = try Message(messagetext: text, chatuserid: user, chatgroupid: group)
+//        try newMessage.save()
+//        return newMessage
+//    }
+//    
     
     
 }
