@@ -12,6 +12,14 @@ import HTTP
 import VaporValidation
 import PostgreSQLProvider
 
+/*
+ "//": "The underlying database technology to use.",
+ "//": "memory: SQLite in-memory DB.",
+ "//": "sqlite: Persisted SQLite DB (configure with sqlite.json)",
+ "//": "Other drivers are available through Vapor providers",
+ "//": "https://github.com/search?q=topic:vapor-provider+topic:database",
+ //"driver": "memory",
+*/
 
 
 
