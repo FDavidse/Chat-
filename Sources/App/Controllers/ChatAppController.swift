@@ -8,6 +8,7 @@ final class ChatAppController {
     
     
     func addRoutes(drop: Droplet) {
+        /*
         let til = drop.grouped("til")
         til.get(handler: indexView)
         til.post(handler: addAcronym)
@@ -16,9 +17,10 @@ final class ChatAppController {
         til.get("login", handler: loginView)
         til.post("login", handler: login)
         til.get("logout", handler: logout)
-        
+        */
     }
     
+    /*
     func indexView(request: Request) throws -> ResponseRepresentable {
         
         let user = try? request.auth.user() as! ChatUser
@@ -104,6 +106,8 @@ final class ChatAppController {
         try request.auth.logout()
         return Response(redirect: "/til")
     }
+ 
+ */
     
     
 }

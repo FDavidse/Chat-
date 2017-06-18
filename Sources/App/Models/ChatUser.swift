@@ -11,6 +11,7 @@ import FluentProvider
 import HTTP
 import VaporValidation
 import Validation
+import AuthProvider
 
 final class ChatUser: Model {
     
@@ -77,9 +78,12 @@ extension ChatUser: RowRepresentable {
 
 extension ChatUser: Preparation {
     static func prepare(_ database: Database) throws {
-        try database.create(self, closure: { (group) in
-            group.id()
-            group.string("name")
+        try database.create(self, closure: { (groups) in
+            groups.id()
+            groups.string("name")
+            groups.string("email")
+            groups.string("password")
+
         })
     }
     
@@ -87,6 +91,15 @@ extension ChatUser: Preparation {
         try database.delete(self)
     }
 }
+
+extension ChatUser: TokenAuthenticatable {
+    // the token model that should be queried
+    // to authenticate this user
+    public typealias TokenType = Token
+}
+
+
+
 
 extension ChatUser {
     

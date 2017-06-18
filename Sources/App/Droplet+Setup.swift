@@ -5,6 +5,9 @@ extension Droplet {
         try setupRoutes()
         // Do any additional droplet setup
         
+        try addMiddleWare()
+        
+        
         //let chatController =
         
         

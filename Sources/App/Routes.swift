@@ -1,6 +1,9 @@
 import Vapor
+import AuthProvider
+import FluentProvider
 
 extension Droplet {
+    
     func setupRoutes() throws {
         get("hello") { req in
             var json = JSON()
@@ -9,6 +12,8 @@ extension Droplet {
         }
 
         get("plaintext") { req in
+            print("trying to get plaintext")
+
             return "Hello, world!"
         }
 
@@ -22,4 +27,20 @@ extension Droplet {
         
         try resource("posts", PostController.self)
     }
+    
+    func addMiddleWare () throws {
+        let tokenMiddleWare = TokenAuthenticationMiddleware(ChatUser.self)
+        
+        let authed = self.grouped(tokenMiddleWare)
+        
+        
+        authed.get("me") { req in
+            // return the authenticated user's name
+            print("trying to get me")
+            return try req.user().name
+        }
+        
+        
+    }
+    
 }

@@ -28,5 +28,6 @@ extension Config {
         preparations.append(Group.self)
         preparations.append(Message.self)
         preparations.append(Post.self)
+        preparations.append(Token.self)
     }
 }
