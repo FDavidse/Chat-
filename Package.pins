@@ -2,6 +2,18 @@
   "autoPin": true,
   "pins": [
     {
+      "package": "Auth",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/auth.git",
+      "version": "1.0.0"
+    },
+    {
+      "package": "AuthProvider",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/auth-provider.git",
+      "version": "1.0.2"
+    },
+    {
       "package": "BCrypt",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/bcrypt.git",
@@ -53,19 +65,19 @@
       "package": "Engine",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/engine.git",
-      "version": "2.0.3"
+      "version": "2.1.0"
     },
     {
       "package": "Fluent",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/fluent.git",
-      "version": "2.0.3"
+      "version": "2.1.1"
     },
     {
       "package": "FluentProvider",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/fluent-provider.git",
-      "version": "1.0.0"
+      "version": "1.1.1"
     },
     {
       "package": "JSON",
@@ -89,13 +101,13 @@
       "package": "PostgreSQL",
       "reason": null,
       "repositoryURL": "https://github.com/vapor-community/postgresql.git",
-      "version": "2.0.1"
+      "version": "2.0.2"
     },
     {
       "package": "PostgreSQLDriver",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/postgresql-driver.git",
-      "version": "2.0.0"
+      "version": "2.0.1"
     },
     {
       "package": "PostgreSQLProvider",
@@ -149,7 +161,7 @@
       "package": "Vapor",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/vapor.git",
-      "version": "2.0.5"
+      "version": "2.1.0"
     }
   ],
   "version": 1

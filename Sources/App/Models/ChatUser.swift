@@ -9,6 +9,8 @@
 import Vapor
 import FluentProvider
 import HTTP
+import VaporValidation
+import Validation
 
 final class ChatUser: Model {
     
