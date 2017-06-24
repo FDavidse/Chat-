@@ -13,6 +13,8 @@ import VaporValidation
 import Validation
 import AuthProvider
 
+
+ 
 final class ChatUser: Model {
     
     let storage = Storage()
@@ -76,6 +78,42 @@ extension ChatUser: RowRepresentable {
     }
 }
 
+
+// MARK: JSON
+
+// How the model converts from / to JSON.
+// For example when:
+//     - Creating a new Post (POST /posts)
+//     - Fetching a post (GET /posts, GET /posts/:id)
+//
+extension ChatUser: JSONConvertible {
+    convenience init(json: JSON) throws {
+        try self.init(
+            name: json.get("name"),
+            email: json.get("email"),
+            rawPassword: json.get("password")
+
+        )
+    }
+    
+    func makeJSON() throws -> JSON {
+        var json = JSON()
+        try json.set("id", id)
+        try json.set("name", name)
+        try json.set("email", email)
+        try json.set("password", password)
+
+        return json
+    }
+}
+
+// MARK: HTTP
+
+// This allows Post models to be returned
+// directly in route closures
+
+extension ChatUser: ResponseRepresentable { }
+
 extension ChatUser: Preparation {
     static func prepare(_ database: Database) throws {
         try database.create(self, closure: { (groups) in
@@ -99,10 +137,12 @@ extension ChatUser: TokenAuthenticatable {
 }
 
 
+extension ChatUser: PasswordAuthenticatable {
 
+}
 
-extension ChatUser {
-    
+//extension ChatUser {
+
 //    func groups() throws -> [Group] {
 //        let groups: Siblings<Group> = try siblings()
 //        return try groups.all()
@@ -113,7 +153,7 @@ extension ChatUser {
 //    }
     
     
-}
+//}
 
 //extension TILUser: Authenticator {
 //    

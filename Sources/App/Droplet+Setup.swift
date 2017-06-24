@@ -6,6 +6,7 @@ extension Droplet {
         // Do any additional droplet setup
         
         try addMiddleWare()
+        try addMiddleWarePassword()
         
         
         //let chatController =
