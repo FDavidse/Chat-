@@ -1,6 +1,9 @@
 import Vapor
 import AuthProvider
 import FluentProvider
+import HTTP
+import Sessions
+
 
 extension Droplet {
     
@@ -84,7 +87,25 @@ extension Droplet {
             
         }
         
+              
     }
 
+    func addMiddleWareAuth () throws {
+        
+        let memory = MemorySessions()
+        let sessionsMiddleware = SessionsMiddleware(memory)
+        
+        let persistMiddleware = PersistMiddleware(ChatUser.self)
+        
+        let passwordMiddleware = PasswordAuthenticationMiddleware(ChatUser.self)
+        
+        let authed = self.grouped([sessionsMiddleware, persistMiddleware, passwordMiddleware])
+        
+        authed.get("meuser") { req in
+            // return the authenticated user
+            return try req.auth.assertAuthenticated(ChatUser.self)
+        }
+        
+    }
     
 }

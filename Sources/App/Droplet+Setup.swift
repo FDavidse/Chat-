@@ -5,11 +5,17 @@ extension Droplet {
         try setupRoutes()
         // Do any additional droplet setup
         
-        try addMiddleWare()
-        try addMiddleWarePassword()
+        //try addMiddleWare()
+        //try addMiddleWarePassword()
+        //try addMiddleWareAuth()
+        
+        let chatAppController = ChatAppController()
+        chatAppController.addRoutes(drop: self)
+        
+        let chatUsers = ChatUserController()
+        chatUsers.addRoutes(drop: self)
         
         
-        //let chatController =
         
         
     }
