@@ -19,14 +19,6 @@ import BCrypt
 final class ChatUser: Model {
     
     
-    struct Properties {
-        static let id = "id"
-        static let name = "name"
-        static let username = "username"
-        static let password = "password"
-        static let email = "email"
-    }
-    
     let storage = Storage()
 
     var name: String
@@ -185,12 +177,9 @@ extension Request {
 }
 
 extension ChatUser: PasswordAuthenticatable {
-    public static let usernameKey = Properties.name
-    public static let passwordVerifier: PasswordVerifier? = ChatUser.passwordHasher
-    public var hashedPassword: String? {
-        return password
-    }
-    internal(set) static var passwordHasher: PasswordHasherVerifier = BCryptHasher(cost: 10)
+    
+    
+    
 }
 
 protocol PasswordHasherVerifier: PasswordVerifier, HashProtocol {}

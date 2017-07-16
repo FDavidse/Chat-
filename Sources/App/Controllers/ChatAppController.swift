@@ -35,11 +35,11 @@ final class ChatAppController {
         let basic = drop.grouped("chat")
         basic.get("index", handler: indexView)
         //basic.post(handler: addAcronym)
-        basic.get("register", handler: registerView)
-        basic.post("register", handler: register)
-//        basic.get("login", handler: loginView)
-//        basic.post("login", handler: login)
-//        basic.get("logout", handler: logout)
+        basic.get("/register", handler: registerView)
+        basic.post("/register", handler: register)
+        basic.get("/login", handler: loginView)
+        basic.post("/login", handler: login)
+//        basic.get("/chatlogout", handler: logout)
 
     }
     
@@ -47,7 +47,7 @@ final class ChatAppController {
     func indexView(request: Request) throws -> ResponseRepresentable {
 
         //let user = try request.auth.assertAuthenticated(ChatUser.self)
-        
+    
         let user = request.auth.authenticated(ChatUser.self)
         
 //        if user != nil {
@@ -96,19 +96,23 @@ final class ChatAppController {
             let name = request.formURLEncoded?["name"]?.string else {
                 return "Missing email, password, or name"
         }
-        _ = try ChatUser.register(name: name, username:name, email: email, rawPassword: password)
+        let newUser = try ChatUser.register(name: name, username:name, email: email, rawPassword: password)
         
-        let hashedPassword = try ChatUser.passwordHasher.make(password)
+        //let hashedPassword = try ChatUser.passwordHasher.make(password)
 
+        request.auth.authenticate(newUser)
         
         //let credentials = UsernamePassword(username: email, password: password)
         
-        let passwordCredentials = Password(username: name.lowercased(), password: password)
+        let passwordCredentials = Password(username: email.lowercased(), password: password)
 
         do {
             let user = try ChatUser.authenticate(passwordCredentials)
             request.auth.authenticate(user)
             print("succes creating user, or something")
+            
+            let userLoggedIn = request.auth.authenticated(ChatUser.self)
+            
             return Response(redirect: "/chat/index")
         }
         catch {
@@ -117,38 +121,43 @@ final class ChatAppController {
             return Response(redirect: "/chat/index")
 
         }
-
-
-        
-        
     }
-    /*
+    
     func loginView(request: Request) throws -> ResponseRepresentable {
-        return try drop.view.make("login")
+        return try self.drop!.view.make("login")
     }
+    
     
     func login(request: Request) throws -> ResponseRepresentable {
         guard let email = request.formURLEncoded?["email"]?.string,
+//            let userName = request.formURLEncoded?["username"]?.string,
             let password = request.formURLEncoded?["password"]?.string  else {
                 //return "Missing email or password"
                 self.wrongLogin = true
-                return Response(redirect: "/til")
+                return Response(redirect: "/chat")
                 
         }
-        let credential = UsernamePassword(username: email, password: password)
+        let passwordCredentials = Password(username: email.lowercased(), password: password)
+
+//        let credential = UsernamePassword(username: email, password: password)
         do {
-            try request.auth.login(credential)
-            return Response(redirect: "/til")
-        } catch let e as TurnstileError {
+            
+            let user = try ChatUser.authenticate(passwordCredentials)
+            try request.auth.authenticate(user)
+            
+            let userLoggedIn = request.auth.authenticated(ChatUser.self)
+            return Response(redirect: "/chat/index")
+           
+        } catch {
             //return e.description
             self.wrongLogin = true
-            return Response(redirect: "/til")
+            return Response(redirect: "/chat")
             
         }
         
         
     }
-    
+    /*
     func logout(request: Request) throws -> ResponseRepresentable {
         try request.auth.logout()
         return Response(redirect: "/til")
