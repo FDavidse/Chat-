@@ -14,26 +14,20 @@ final class ChatAppController {
     func addRoutes(drop: Droplet) {
       
         self.drop = drop
-        
-        let memory = MemorySessions()
-        let sessionsMiddleware = SessionsMiddleware(memory)
-        
-        let persistMiddleware = PersistMiddleware(ChatUser.self)
-        
-        let passwordMiddleware = PasswordAuthenticationMiddleware(ChatUser.self)
-        
-        let authed = drop.grouped([sessionsMiddleware, persistMiddleware, passwordMiddleware])
-        
-        authed.get("meuser") { req in
-            // return the authenticated user
-            return try req.auth.assertAuthenticated(ChatUser.self)
-        }
+//        
+//        let memory = MemorySessions()
+//        let sessionsMiddleware = SessionsMiddleware(memory)
+//        let persistMiddleware = PersistMiddleware(ChatUser.self)
+//        let passwordMiddleware = PasswordAuthenticationMiddleware(ChatUser.self)
+//
+//        let authed = drop.grouped([sessionsMiddleware, persistMiddleware, passwordMiddleware])
+        //authed.get("chat/index", handler: indexView)
+
+        let basic = drop.grouped("chat")
+        basic.get("/login", handler: loginView)
+        basic.get("/index", handler: indexView)
 
         
-        
-        
-        let basic = drop.grouped("chat")
-        basic.get("index", handler: indexView)
         //basic.post(handler: addAcronym)
         basic.get("/register", handler: registerView)
         basic.post("/register", handler: register)
@@ -46,9 +40,10 @@ final class ChatAppController {
 
     func indexView(request: Request) throws -> ResponseRepresentable {
 
-        //let user = try request.auth.assertAuthenticated(ChatUser.self)
+        //let user3 = try request.auth.assertAuthenticated(ChatUser.self)
     
         let user = request.auth.authenticated(ChatUser.self)
+        //let user2 = try request.user()
         
 //        if user != nil {
 //            self.wrongLogin = false
@@ -130,21 +125,17 @@ final class ChatAppController {
     
     func login(request: Request) throws -> ResponseRepresentable {
         guard let email = request.formURLEncoded?["email"]?.string,
-//            let userName = request.formURLEncoded?["username"]?.string,
             let password = request.formURLEncoded?["password"]?.string  else {
                 //return "Missing email or password"
-                self.wrongLogin = true
                 return Response(redirect: "/chat")
-                
         }
         let passwordCredentials = Password(username: email.lowercased(), password: password)
 
-//        let credential = UsernamePassword(username: email, password: password)
         do {
-            
             let user = try ChatUser.authenticate(passwordCredentials)
             try request.auth.authenticate(user)
             
+            //to check if we have an authenticated user now
             let userLoggedIn = request.auth.authenticated(ChatUser.self)
             return Response(redirect: "/chat/index")
            
@@ -152,9 +143,7 @@ final class ChatAppController {
             //return e.description
             self.wrongLogin = true
             return Response(redirect: "/chat")
-            
         }
-        
         
     }
     /*

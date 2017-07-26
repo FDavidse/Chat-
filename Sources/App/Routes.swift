@@ -101,11 +101,7 @@ extension Droplet {
         
         let authed = self.grouped([sessionsMiddleware, persistMiddleware, passwordMiddleware])
         
-        authed.get("meuser") { req in
-            // return the authenticated user
-            return try req.auth.assertAuthenticated(ChatUser.self)
-        }
-        
+                
     }
     
 }

@@ -182,6 +182,7 @@ extension ChatUser: PasswordAuthenticatable {
     
 }
 
+
 protocol PasswordHasherVerifier: PasswordVerifier, HashProtocol {}
 
 extension BCryptHasher: PasswordHasherVerifier {}

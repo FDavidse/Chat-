@@ -3,7 +3,8 @@ import PostgreSQLProvider
 import AuthProvider
 import VaporValidation
 import LeafProvider
-
+import HTTP
+import Sessions
 
 extension Config {
     public func setup() throws {
@@ -13,6 +14,7 @@ extension Config {
 
         try setupProviders()
         try setupPreparations()
+        try setupMiddleware()
     }
     
     /// Configure providers
@@ -33,4 +35,24 @@ extension Config {
         preparations.append(Post.self)
         preparations.append(Token.self)
     }
+    
+    private func setupMiddleware() throws {
+        
+        
+        let memory = MemorySessions()
+        let sessionsMiddleware = SessionsMiddleware(memory)
+        let persistMiddleware = PersistMiddleware(ChatUser.self)
+        let passwordMiddleware = PasswordAuthenticationMiddleware(ChatUser.self)
+        
+        //let authed = drop.grouped([sessionsMiddleware, persistMiddleware, passwordMiddleware])
+        self.addConfigurable(middleware: sessionsMiddleware, name: "session")
+        self.addConfigurable(middleware: persistMiddleware, name: "persist")
+        self.addConfigurable(middleware: passwordMiddleware, name: "password")
+
+        
+        try self.resolveSessions()
+        
+    
+    }
+
 }
