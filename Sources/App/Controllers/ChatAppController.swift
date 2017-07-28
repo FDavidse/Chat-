@@ -4,6 +4,7 @@ import AuthProvider
 import FluentProvider
 import HTTP
 import Sessions
+import Node
 
 
 final class ChatAppController {
@@ -40,20 +41,41 @@ final class ChatAppController {
 
     func indexView(request: Request) throws -> ResponseRepresentable {
 
-        //let user3 = try request.auth.assertAuthenticated(ChatUser.self)
+       
     
         let user = request.auth.authenticated(ChatUser.self)
-        //let user2 = try request.user()
         
 //        if user != nil {
 //            self.wrongLogin = false
 //        }
 //        
+        
+        let newUser = try ChatUser(name: "test", username: "test", email: "test", rawPassword: "test")
+        let userNode1 = try user.makeNode(in: nil)
+
+        
+        var userNode: Node = nil
+        if user != nil {
+            let node: Node = Node(emptyContext)
+            
+            let nodeContext : Context = node.context
+            
+            
+            
+            userNode = try user.makeNode(in: nodeContext)
+            
+        }else{
+            userNode = nil
+        }
+        
         let parameters = try Node(node: [
-            "authenticated": false,
-            "user": user.makeNode(in: nil) ,
-            "wrongpassword": self.wrongLogin
+            "authenticated": true,
+            "user": userNode ,
+            "wrongpassword": false
             ])
+            
+        
+        
         return try drop!.view.make("index", parameters)
         
     

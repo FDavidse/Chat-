@@ -13,7 +13,7 @@ import VaporValidation
 import Validation
 import AuthProvider
 import BCrypt
-
+import Node
 
  
 final class ChatUser: Model {
@@ -64,20 +64,35 @@ final class ChatUser: Model {
     
 }
 
-extension ChatUser: NodeRepresentable {
-    func makeNode(context: Context) throws -> Node {
-        var node = Node(context)
-        try node.set("name", name)
-        try node.set("username", username)
-        try node.set("email", email)
-        try node.set("password", password)
-        
-        return node
-        
-    }
 
-    
+extension ChatUser: NodeRepresentable {
+    func makeNode(in context: Context?) throws -> Node {
+        var node = Node(context)
+                try node.set("name", name)
+                try node.set("username", username)
+                try node.set("email", email)
+                try node.set("password", password)
+        
+                return node
+    }
 }
+
+
+
+//extension ChatUser: NodeRepresentable {
+//    func makeNode(in context: Context) throws -> Node {
+//        var node = Node(context)
+//        try node.set("name", name)
+//        try node.set("username", username)
+//        try node.set("email", email)
+//        try node.set("password", password)
+//        
+//        return node
+//        
+//    }
+//
+//    
+//}
 
 extension ChatUser: RowRepresentable {
     func makeRow() throws -> Row {

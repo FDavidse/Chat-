@@ -50,7 +50,7 @@ extension Config {
         self.addConfigurable(middleware: passwordMiddleware, name: "password")
 
         
-        try self.resolveSessions()
+        //try self.resolveSessions()
         
     
     }
