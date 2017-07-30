@@ -68,31 +68,16 @@ final class ChatUser: Model {
 extension ChatUser: NodeRepresentable {
     func makeNode(in context: Context?) throws -> Node {
         var node = Node(context)
-                try node.set("name", name)
-                try node.set("username", username)
-                try node.set("email", email)
-                try node.set("password", password)
+        try node.set("name", name)
+        try node.set("username", username)
+        try node.set("email", email)
+        try node.set("password", password)
         
-                return node
+        return node
     }
 }
 
 
-
-//extension ChatUser: NodeRepresentable {
-//    func makeNode(in context: Context) throws -> Node {
-//        var node = Node(context)
-//        try node.set("name", name)
-//        try node.set("username", username)
-//        try node.set("email", email)
-//        try node.set("password", password)
-//        
-//        return node
-//        
-//    }
-//
-//    
-//}
 
 extension ChatUser: RowRepresentable {
     func makeRow() throws -> Row {
@@ -197,6 +182,24 @@ extension ChatUser: PasswordAuthenticatable {
     
 }
 
+
+extension ChatUser {
+    
+    func allUsers() throws -> [ChatUser] {
+        let users = try ChatUser.all()
+        return users
+    }
+    
+}
+
+extension ChatUser {
+    //not correct yet
+    func userGroups() throws -> [Group] {
+        let userGroups = try Group.all()
+        return userGroups
+    }
+    
+}
 
 protocol PasswordHasherVerifier: PasswordVerifier, HashProtocol {}
 

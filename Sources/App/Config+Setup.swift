@@ -34,6 +34,8 @@ extension Config {
         preparations.append(Message.self)
         preparations.append(Post.self)
         preparations.append(Token.self)
+        //preparations.append(Pivot<ChatUser, Group>.self)
+
     }
     
     private func setupMiddleware() throws {

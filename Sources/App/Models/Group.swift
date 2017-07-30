@@ -9,18 +9,9 @@
 import Vapor
 import Fluent
 import HTTP
+import FluentProvider
 import VaporValidation
 import PostgreSQLProvider
-
-/*
- "//": "The underlying database technology to use.",
- "//": "memory: SQLite in-memory DB.",
- "//": "sqlite: Persisted SQLite DB (configure with sqlite.json)",
- "//": "Other drivers are available through Vapor providers",
- "//": "https://github.com/search?q=topic:vapor-provider+topic:database",
- //"driver": "memory",
-*/
-
 
 
 final class Group: Model {
@@ -41,17 +32,8 @@ final class Group: Model {
         self.name = try node.get("name")
     }
 
-    
-    func makeNode(in context: Context) throws -> Node {
-        var node = Node(context)
-        try node.set("name", name)
-        
-        return node
-    }
-
-    
-    static func addGroup(name: String) throws -> Group {
-        let newGroup = try Group(name: name)
+   static func addGroup(name: String) throws -> Group {
+        let newGroup = Group(name: name)
         try newGroup.save()
         return newGroup
         
@@ -66,14 +48,26 @@ final class Group: Model {
 //}
 
 
-//extension Group: NodeRepresentable {
-//    func makeNode(in context: Context) throws -> Node {
-//        var node = Node(context)
-//        try node.set("name", name)
-//
-//        return node
-//    }
-//}
+extension Group: NodeRepresentable {
+    func makeNode(in context: Context?) throws -> Node {
+        var node = Node(context)
+        try node.set("name", name)
+        return node
+    }
+}
+
+extension Group: JSONRepresentable {
+    func makeJSON() throws -> JSON {
+        var json = JSON()
+        try json.set("id", id)
+        try json.set("name", name)
+        return json
+    }
+}
+
+extension Group: ResponseRepresentable {
+    
+}
 
 extension Group: RowRepresentable {
     func makeRow() throws -> Row {
@@ -82,6 +76,9 @@ extension Group: RowRepresentable {
         return row
     }
 }
+
+extension Group: Parameterizable { }
+
 
 extension Group: Preparation {
     static func prepare(_ database: Database) throws {

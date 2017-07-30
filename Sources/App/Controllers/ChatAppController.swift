@@ -34,7 +34,7 @@ final class ChatAppController {
         basic.post("/register", handler: register)
         basic.get("/login", handler: loginView)
         basic.post("/login", handler: login)
-//        basic.get("/chatlogout", handler: logout)
+        basic.get("/logout", handler: logout)
 
     }
     
@@ -45,15 +45,7 @@ final class ChatAppController {
     
         let user = request.auth.authenticated(ChatUser.self)
         
-//        if user != nil {
-//            self.wrongLogin = false
-//        }
-//        
-        
-        let newUser = try ChatUser(name: "test", username: "test", email: "test", rawPassword: "test")
-        let userNode1 = try user.makeNode(in: nil)
-
-        
+        var logginIn:Bool = true
         var userNode: Node = nil
         if user != nil {
             let node: Node = Node(emptyContext)
@@ -62,14 +54,15 @@ final class ChatAppController {
             
             
             
-            userNode = try user.makeNode(in: nodeContext)
+            userNode = try user.makeNode(in: nil)
             
         }else{
             userNode = nil
+            logginIn = false
         }
         
         let parameters = try Node(node: [
-            "authenticated": true,
+            "authenticated": logginIn,
             "user": userNode ,
             "wrongpassword": false
             ])
@@ -168,13 +161,17 @@ final class ChatAppController {
         }
         
     }
-    /*
+    
     func logout(request: Request) throws -> ResponseRepresentable {
-        try request.auth.logout()
-        return Response(redirect: "/til")
+        
+        //let user = request.auth.authenticated(ChatUser.self)
+        try request.auth.unauthenticate()
+        
+        //try request.auth.logout()
+        return Response(redirect: "/chat/index")
     }
  
- */
+
     
     
 }

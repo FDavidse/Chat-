@@ -7,30 +7,32 @@
 //
 
 import Vapor
+import Fluent
 import FluentProvider
 import HTTP
 
 final class Message: Model {
    
-    var username: String? = nil //doesn't go in the database
     var messagetext: String
+    var author: Identifier?
     var chatuserid: Node?
     var chatgroupid: Node?
     
     let storage = Storage()
 
     
-    init(messagetext: String, chatuserid: Node? = nil, chatgroupid: Node? = nil) throws {
+    init(messagetext: String, author: ChatUser, chatuserid: Node? = nil, chatgroupid: Node? = nil) throws {
         self.messagetext = messagetext
+        self.author = author.id
         self.chatuserid = chatuserid
         self.chatgroupid = chatgroupid
         print("adding new message with id \(String(describing: self.id)), text: \(messagetext), tiluserid: \(String(describing: self.chatuserid)), chatgroup id: \(String(describing: self.chatgroupid))")
         
-        self.username = "default"
     }
     
     init(row: Row) throws {
         self.messagetext = try row.get("messagetext")
+        self.author = try row.get(ChatUser.foreignIdKey)
         self.chatuserid = try row.get("chatuserid")
         self.chatgroupid = try row.get("chatgroupid")
 
@@ -48,14 +50,6 @@ final class Message: Model {
         
     }
     
-    func makeNode(in context: Context) throws -> Node {
-        var node = Node(context)
-        try node.set("messagetext", messagetext)
-        try node.set("chatuserid", chatuserid)
-        try node.set("chatgroupid", chatgroupid)
-
-        return node
-    }
     
     
 //    static func addMessage(text: String, user: ChatUser?, group: Group?) throws -> Message {
@@ -70,16 +64,59 @@ final class Message: Model {
 }
 
 
+extension Message: JSONConvertible {
+    convenience init(json: JSON) throws {
+        try self.init(
+            messagetext: json.get("messagetext"),
+            author: json.get("chatuser"),
+            chatuserid: json.get("chatuserid"),
+            chatgroupid: json.get("chatgroupid")
+        )
+
+    }
+    
+}
+
+
+extension Message: JSONRepresentable {
+    func makeJSON() throws -> JSON {
+        var json = JSON()
+        try json.set("id", id)
+        try json.set("messagetext", messagetext)
+        try json.set("chatuserid", chatuserid)
+        try json.set("chatgroupid", chatgroupid)
+        
+        return json
+    }
+}
+
+extension Message: NodeRepresentable {
+    func makeNode(in context: Context?) throws -> Node {
+        var node = Node(context)
+        try node.set("messagetext", messagetext)
+        try node.set(ChatUser.foreignIdKey, author)
+        try node.set("chatuserid", chatuserid)
+        try node.set("chatgroupid", chatgroupid)
+        
+        return node
+    }
+}
+
+
 extension Message: RowRepresentable {
     func makeRow() throws -> Row {
         var row = Row()
         try row.set("messagetext", messagetext)
+        try row.set(ChatUser.foreignIdKey, author)
         try row.set("chatuserid", chatuserid)
         try row.set("chatgroupid", chatgroupid)
 
         return row
     }
 }
+
+extension Message: Parameterizable { }
+
 
 extension Message: Preparation {
     static func prepare(_ database: Database) throws {
@@ -95,6 +132,15 @@ extension Message: Preparation {
     static func revert(_ database: Database) throws {
         try database.delete(self)
     }
+}
+
+extension Message {
+
+    func allMessages() throws -> [Message] {
+        let messages = try Message.all()
+        return messages
+    }
+
 }
 
 
