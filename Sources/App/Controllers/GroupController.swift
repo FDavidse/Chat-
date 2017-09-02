@@ -18,8 +18,10 @@ final class GroupController {
         basic.post("delete", Group.parameter, handler: deleteGroup)
         //basic.delete(Group.self, handler: delete)
         //basic.get("users", Group.parameter, handler: tilusersIndex)
-        basic.post(ChatUser.parameter, "joingroup", Group.parameter, handler: joinGroupView)
-        
+        basic.post("joingroup", Group.parameter, handler: joinGroupView)
+        //basic.post("joingroup", Group.parameter, handler: joinGroupView)
+        basic.post(Group.parameter, "joingroup", handler: joinGroupView)
+
     }
     
 //    func index(request: Request) throws -> ResponseRepresentable {
@@ -33,6 +35,7 @@ final class GroupController {
         if user != nil {
             
             let allGroups : [Group]? = try Group.all()
+            var groupIds : [Int] = []
             
             var groups: [Group]? = []
             if let user = user {
@@ -54,6 +57,8 @@ final class GroupController {
                     if !allreadyJoined {
                         notJoinedGroups?.append(group)
                     }
+                    groupIds.append((group.id?.int)!)
+                    
                 }
             }
             
@@ -73,7 +78,8 @@ final class GroupController {
                 "allreadyJoinedGroup": joined.makeNode(in: nil),
                 "notJoinedGroups": notJoinedGroupsNode,
                 "authenticated": loggedIn,
-                "user": user!.makeNode(in: nil)
+                "user": user!.makeNode(in: nil),
+                "groupIds": groupIds
                 ])
             
             return try drop!.view.make("group", parameters)
@@ -112,6 +118,44 @@ final class GroupController {
 //        var pivot = try Pivot<ChatUser, Group>(chatuser, group)
 //        try pivot.save()
         //return tiluser
+        
+        if let groupname = request.data["name"]?.string {
+            print("group name: \(groupname)")
+        } else {
+            print("no group name")
+            
+        }
+        
+        if let groupid = request.data["groupid"]?.string {
+            print("group id: \(groupid)")
+        } else {
+            print("no group id")
+
+        }
+        
+        if let group_id = request.data["group_id"]?.string {
+            print("group_id: \(group_id)")
+        } else {
+            print("no group_id")
+            
+        }
+        
+        let params = request.parameters
+        
+        if let group_param_id = request.parameters["group_id"]?.string {
+            print("group_param_id: \(group_param_id)")
+            //let joinedGroup = Group.groupFor(group_param_id)
+            
+            let groupFromId = try Group.groupFor(name: group_param_id)
+            
+            
+            
+        } else {
+            print("no group_param_id")
+            
+        }
+        
+        
         
         return Response(redirect: "/groups/list")
     }

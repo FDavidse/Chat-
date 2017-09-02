@@ -19,7 +19,7 @@ final class Group: Model {
 
     var name: String
     let storage = Storage()
-    
+    var id: Identifier?
     init(name: String) {
         self.name = name
     }
@@ -38,6 +38,19 @@ final class Group: Model {
         return newGroup
         
     }
+    
+    static func groupFor(name : String) throws -> Group {
+        let groups = try Group.makeQuery().filter("name", .equals, name)
+        
+        let group = try groups.first()
+        
+        if let foundGroup = group {
+            return foundGroup
+        } else {
+            throw Abort.badRequest
+        }
+    }
+
     
 }
 
@@ -93,6 +106,11 @@ extension Group: Preparation {
     }
 }
 
+
+extension Group {
+    
+    
+}
 
 //extension Group {
 //    func tilusers() throws -> [TILUser] {

@@ -49,7 +49,8 @@ final class ChatAppController {
         var userNode: Node = nil
         if user != nil {
             let node: Node = Node(emptyContext)
-            
+            print("user id is \(user!.id ?? "")")
+
             let nodeContext : Context = node.context
             
             
