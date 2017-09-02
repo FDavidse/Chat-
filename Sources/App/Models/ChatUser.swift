@@ -201,6 +201,12 @@ extension ChatUser {
     
 }
 
+extension ChatUser {
+    var groups: Siblings<ChatUser, Group, Pivot<ChatUser, Group>> {
+        return siblings()
+    }
+}
+
 protocol PasswordHasherVerifier: PasswordVerifier, HashProtocol {}
 
 extension BCryptHasher: PasswordHasherVerifier {}

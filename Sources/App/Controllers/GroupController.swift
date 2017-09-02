@@ -18,10 +18,10 @@ final class GroupController {
         basic.post("delete", Group.parameter, handler: deleteGroup)
         //basic.delete(Group.self, handler: delete)
         //basic.get("users", Group.parameter, handler: tilusersIndex)
-        basic.post("joingroup", Group.parameter, handler: joinGroupView)
+        //basic.post("joingroup", Group.parameter, handler: joinGroupView)
         //basic.post("joingroup", Group.parameter, handler: joinGroupView)
         basic.post(Group.parameter, "joingroup", handler: joinGroupView)
-
+        basic.post(Group.parameter, "leavegroup", handler: leaveGroupView)
     }
     
 //    func index(request: Request) throws -> ResponseRepresentable {
@@ -31,6 +31,15 @@ final class GroupController {
     func indexView(request: Request) throws -> ResponseRepresentable {
         
         let user = request.auth.authenticated(ChatUser.self)
+        
+        var joinedGroups : [Group] = []
+        
+        if let j = try user?.groups.all() {
+            joinedGroups = j
+            for group in joinedGroups {
+                print("name of joined group: \(group.name)")
+            }
+        }
         
         if user != nil {
             
@@ -75,7 +84,7 @@ final class GroupController {
             let parameters = try Node(node: [
                 "allGroups": allGroupsNode,
                 "userGroups": userGroupsNode,
-                "allreadyJoinedGroup": joined.makeNode(in: nil),
+                "allreadyJoinedGroup": joinedGroups.makeNode(in: nil),
                 "notJoinedGroups": notJoinedGroupsNode,
                 "authenticated": loggedIn,
                 "user": user!.makeNode(in: nil),
@@ -119,27 +128,7 @@ final class GroupController {
 //        try pivot.save()
         //return tiluser
         
-        if let groupname = request.data["name"]?.string {
-            print("group name: \(groupname)")
-        } else {
-            print("no group name")
-            
-        }
-        
-        if let groupid = request.data["groupid"]?.string {
-            print("group id: \(groupid)")
-        } else {
-            print("no group id")
-
-        }
-        
-        if let group_id = request.data["group_id"]?.string {
-            print("group_id: \(group_id)")
-        } else {
-            print("no group_id")
-            
-        }
-        
+              
         let params = request.parameters
         
         if let group_param_id = request.parameters["group_id"]?.string {
@@ -147,6 +136,12 @@ final class GroupController {
             //let joinedGroup = Group.groupFor(group_param_id)
             
             let groupFromId = try Group.groupFor(name: group_param_id)
+            
+            print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
+            
+            let user = request.auth.authenticated(ChatUser.self)
+            
+            try user?.groups.add(groupFromId)
             
             
             
@@ -159,6 +154,32 @@ final class GroupController {
         
         return Response(redirect: "/groups/list")
     }
+    
+    func leaveGroupView(request: Request) throws -> ResponseRepresentable {
+   
+        if let group_param_id = request.parameters["group_id"]?.string {
+            print("group_param_id: \(group_param_id)")
+            
+            let groupFromId = try Group.groupFor(name: group_param_id)
+            
+            print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
+            
+            let user = request.auth.authenticated(ChatUser.self)
+            
+            try user?.groups.remove(groupFromId)
+            
+            
+            
+        } else {
+            print("no group_param_id")
+            
+        }
+        
+        
+        
+        return Response(redirect: "/groups/list")
+    }
+
     
     
     func delete(request: Request, group: Group) throws -> ResponseRepresentable {
