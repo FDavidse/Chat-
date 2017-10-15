@@ -193,7 +193,16 @@ extension ChatUser {
 }
 
 extension ChatUser {
-    //not correct yet
+    
+    func userForId(userid: Identifier) throws -> ChatUser {
+        let user = try ChatUser.find(userid)
+        return user!
+    }
+    
+}
+
+extension ChatUser {
+
     func userGroups() throws -> [Group] {
         let userGroups = try Group.all()
         return userGroups
@@ -211,19 +220,6 @@ protocol PasswordHasherVerifier: PasswordVerifier, HashProtocol {}
 
 extension BCryptHasher: PasswordHasherVerifier {}
 
-//extension ChatUser {
-
-//    func groups() throws -> [Group] {
-//        let groups: Siblings<Group> = try siblings()
-//        return try groups.all()
-//    }
-//    
-//    func messages() throws -> [Message] {
-//        return try children(nil, Message.self).all()
-//    }
-    
-    
-//}
 
 //extension TILUser: Authenticator {
 //    

@@ -85,35 +85,32 @@
 <p><span>#(message.messagetext)</span><p>
 </div>
 <div class="three columns">
-<p><span>#(message.username)</span></p>
+<p><span>#(message.user_id)</span></p>
 </div>
 <div class="two columns">
-<p><span>#(message.chatgroupid)</span></p>
+<p><span>#(message.group_id)</span></p>
 </div>
 <div class="four columns">
-<p><span>#(message.id)</span></p>
+<p><span>#(message.username)</span></p>
 </div>
 </div>
 
-
-
-
-<!--
-<div class="two columns">
-<form action="/groups/#(group.id)/delete" method="post">
-<input type="submit" value="Delete"/>
-</form>
-</div>
-<div class="two columns">
-<form action="/groups/#(group.id)/delete" method="post">
-<input type="submit" value="Show Conversation"/>
-</form>
-</div>
-</div>
--->
 }
 
 
+<!--
+ <div class="two columns">
+ <form action="/groups/#(group.id)/delete" method="post">
+ <input type="submit" value="Delete"/>
+ </form>
+ </div>
+ <div class="two columns">
+ <form action="/groups/#(group.id)/delete" method="post">
+ <input type="submit" value="Show Conversation"/>
+ </form>
+ </div>
+ </div>
+ -->
 }
 
 }

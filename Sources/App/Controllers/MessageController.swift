@@ -1,15 +1,15 @@
  import Vapor
-import HTTP
-import Fluent
-
-
-final class MessageController {
+ import HTTP
+ import Fluent
+ 
+ 
+ final class MessageController {
     var drop: Droplet? = nil
     var group: Group? = nil
     
     
     func addRoutes(drop: Droplet) {
-
+        
         self.drop = drop
         
         let basic = drop.grouped("messages")
@@ -18,16 +18,16 @@ final class MessageController {
         basic.post(Group.parameter, "list", handler: indexView)
         basic.post(Group.parameter, "addMessage", handler: createMessage)
         basic.post("createNewGroup", handler: createNewGroup)
-       
+        
         //basic.delete(Group.self, handler: delete)
         basic.post(Group.parameter, "joingroup", handler: joinGroupView)
-
-
-
-
-
-
-
+        
+        
+        
+        
+        
+        
+        
     }
     
     
@@ -36,42 +36,42 @@ final class MessageController {
         let user = request.auth.authenticated(ChatUser.self)
         
         if user != nil {
-        
-
-        if let group_param_id = request.parameters["group_id"]?.string {
-            print("group_param_id: \(group_param_id)")
-            
-            let groupFromId = try Group.groupFor(name: group_param_id)
-            self.group = groupFromId
-            
-            let users = try groupFromId.users.all()
             
             
-            print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
-            
-            let user = request.auth.authenticated(ChatUser.self)
-            
-            
-            let groupsMessages = try groupFromId.messages.all()
-            
-            
-            
-            
-            let parameters = try Node(node: [
-                "messages": groupsMessages,
-                "authenticated": true,
-                "user": user!.makeNode(in: nil)
-                ])
-            
-            return try drop!.view.make("message", parameters)
-            
-            //return Response(redirect: "/messages/test/list")
-            
-            
-        } else {
-            print("no group_param_id")
-            
-        }
+            if let group_param_id = request.parameters["group_id"]?.string {
+                print("group_param_id: \(group_param_id)")
+                
+                let groupFromId = try Group.groupFor(name: group_param_id)
+                self.group = groupFromId
+                
+                let users = try groupFromId.users.all()
+                
+                
+                print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
+                
+                let user = request.auth.authenticated(ChatUser.self)
+                
+                
+                let groupsMessages = try groupFromId.messages.all()
+                
+                
+                
+                
+                let parameters = try Node(node: [
+                    "messages": groupsMessages,
+                    "authenticated": true,
+                    "user": user!.makeNode(in: nil)
+                    ])
+                
+                return try drop!.view.make("message", parameters)
+                
+                //return Response(redirect: "/messages/test/list")
+                
+                
+            } else {
+                print("no group_param_id")
+                
+            }
             
         }
         
@@ -87,25 +87,45 @@ final class MessageController {
             throw Abort.badRequest
         }
         
-        let newMessage = try Message.addMessage(text: text, group: self.group)
         let user = request.auth.authenticated(ChatUser.self)
+        let newMessage = try Message.addMessage(text: text, group: self.group, user: user)
+        
         
         if user != nil {
-        
-        if let thisGroup = self.group {
-        
-        let groupsMessages = try thisGroup.messages.all()
-      
-        let parameters = try Node(node: [
-            "messages": groupsMessages,
-            "authenticated": true,
-            "user": user!.makeNode(in: nil)
-            ])
-        
-        return try drop!.view.make("message", parameters)
-        } else {
-            return Response(redirect: "/messages")
-        }
+            
+            if let thisGroup = self.group {
+                
+                let groupsMessages = try thisGroup.messages.all()
+                
+                var users: [ChatUser] = []
+                
+                for message in groupsMessages {
+                    
+                    let messageUser = try ChatUser.find(message.userId)
+                    users.append(messageUser!)
+                    message.username = (messageUser?.username)!
+                    
+                    
+                }
+                
+                
+                //find user based on id
+                
+                let messageUser = try ChatUser.find(1)
+                
+                
+                
+                let parameters = try Node(node: [
+                    "messages": groupsMessages,
+                    "authenticated": true,
+                    "authors": users,
+                    "user": user!.makeNode(in: nil)
+                    ])
+                
+                return try drop!.view.make("message", parameters)
+            } else {
+                return Response(redirect: "/messages")
+            }
         } else {
             return Response(redirect: "/chat/index")
         }
@@ -220,4 +240,4 @@ final class MessageController {
         //try group.delete()
         return Response(redirect: "/groups/list")
     }
-}
+ }
