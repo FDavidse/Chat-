@@ -17,9 +17,6 @@ final class GroupController {
         basic.post("createNewGroup", handler: createNewGroup)
         basic.post("delete", Group.parameter, handler: deleteGroup)
         //basic.delete(Group.self, handler: delete)
-        //basic.get("users", Group.parameter, handler: tilusersIndex)
-        //basic.post("joingroup", Group.parameter, handler: joinGroupView)
-        //basic.post("joingroup", Group.parameter, handler: joinGroupView)
         basic.post(Group.parameter, "joingroup", handler: joinGroupView)
         basic.post(Group.parameter, "leavegroup", handler: leaveGroupView)
     }
@@ -140,8 +137,20 @@ final class GroupController {
             print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
             
             let user = request.auth.authenticated(ChatUser.self)
+            if let attached = try user?.groups.isAttached(groupFromId) {
+                if attached {
+                    //already member of group
+                } else {
+                    //add it
+                    try user?.groups.add(groupFromId)
+                }
+            } else {
+                //problem getting attached info
+            }
             
-            try user?.groups.add(groupFromId)
+            
+            
+            
             
             
             
