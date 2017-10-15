@@ -1,0 +1,139 @@
+#extend("base")
+
+#export("body") {
+
+    <div class="row">
+        <div class="u-full-width">
+            #if(authenticated) {
+            <h5>Welcome, #(user.name), with Id:#(user.id), userid:#(user.identifier.id), user_id:#(user.storage),  user_id_storage:#(user.storage.id)</h5>
+            <a class="button" href="/chat/logout">Logout</a>
+            <a class="button" href="/chat/index">Home</a>
+
+    } ##else() {
+    <a class="button" href="/chat/login">Login</a>
+    <a class="button" href="/chat/register">Register</a>
+    }
+        </div>
+</div>
+
+#if(authenticated) {
+
+<div class="row">
+<div class="u-full-width">
+<h4>Add a New Group, the name has to be unique</h4>
+</div>
+</div>
+
+<form action="/groups" method="post">
+    <div class="row">
+        <div class="three columns">
+            <label>Group</label>
+            <input name="name" class="u-full-width" placeholder="name of group" />
+            <input class="button-primary" type="submit" value="Save Group">
+        </div>
+    </div>
+    </div>
+</form>
+}
+
+
+
+
+<div class="row">
+    <div class="u-full-width">
+        <h4>All Groups</h4>
+    </div>
+</div>
+
+#loop(allGroups, "group") {
+<div class="row">
+    <div class="one columns">
+        <h5><span>    </span></h5>
+    </div>
+    <div class="three columns">
+        <h5><span>Group name</span></h5>
+    </div>
+    <div class="two columns">
+        <h5><span>#(group.name)</span></h5>
+    </div>
+    <div class="four columns">
+        <p><span>#(group.id)</span></p>
+    </div>
+    <div class="two columns">
+        <form action="/groups/#(group.name)/joingroup" method="post">
+            <input type="submit" value="Join Group"/>
+        </form>
+    </div>
+</div>
+
+}
+
+<div class="row">
+    <div class="u-full-width">
+        <h4>Groups joined by you</h4>
+    </div>
+</div>
+
+
+#loop(allreadyJoinedGroup, "group") {
+<div class="row">
+    <div class="one columns">
+        <h5><span>    </span></h5>
+    </div>
+    <div class="three columns">
+        <h5><span>Group name</span></h5>
+    </div>
+    <div class="two columns">
+        <h5><span>#(group.name)</span></h5>
+    </div>
+    <div class="four columns">
+        <form action="/messages/#(group.name)/list" method="post">
+            <input type="submit" value="Show Group Conversations"/>
+        </form>
+    </div>
+    <div class="two columns">
+        <form action="/groups/#(group.name)/leavegroup" method="post">
+            <input type="submit" value="Leave Group"/>
+        </form>
+    </div>
+</div>
+
+}
+
+<!--
+<div class="row">
+    <div class="u-full-width">
+        <h4>Already joined Groups</h4>
+    </div>
+</div>
+#loop(allreadyJoinedGroup, "joined") {
+#if(joined){
+<div class="row">
+<div class="two columns">
+<h5><span>Joined Group name</span></h5>
+</div>
+<div class="four columns">
+<h5><span>#(group.name)</span></h5>
+</div>
+<div class="six columns">
+<p><span>#(group.name)</span></p>
+</div>
+</div>
+} ##else() {
+<div class="row">
+<div class="two columns">
+<h5><span>Not Joined Group name</span></h5>
+</div>
+<div class="four columns">
+<h5><span>#(group.name)</span></h5>
+</div>
+<div class="six columns">
+<p><span>#(group.name)</span></p>
+</div>
+</div>
+}}
+ -->
+
+ }
+
+

@@ -13,6 +13,8 @@ extension Droplet {
         chatAppController.addRoutes(drop: self)
         let groupController = GroupController()
         groupController.addRoutes(drop: self)
+        let messageController = MessageController()
+        messageController.addRoutes(drop: self)
         let chatUsers = ChatUserController()
         chatUsers.addRoutes(drop: self)
         

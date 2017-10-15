@@ -1,0 +1,19 @@
+#extend("base")
+
+#export("body") {
+<div class = "row">
+    <div class = "u-full-widt">
+        <form action = "/chat/login" method = "post">
+            <label>Email</label>
+            <input name = "email" class = "u-full-width" type = "email"/>
+            <label>Password</label>
+            <input name = "password" class = "u-full-width" type = "password"/>
+            <input class = "button-primary" type="submit" value="Login"/>
+        </form>
+
+    <p>Not a user of CHAT! ? <a href = "?/chat/register">Register for CHAT!</a></p>
+    </div>
+</div>
+
+
+}

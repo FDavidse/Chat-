@@ -112,23 +112,16 @@ extension Group {
     
 }
 
-//extension Group {
+extension Group {
 //    func tilusers() throws -> [TILUser] {
 //        let tilusers: Siblings<TILUser> = try siblings()
 //        return try tilusers.all()
 //    }
-//    
-//    func messagesFor(group: Group?) throws -> [Message] {
-//        let messages = try Message.all()
-//        
-//        var messagesForGroup : [Message] = []
-//        for message in messages {
-//            if try message.group()?.id == group?.id {
-//                messagesForGroup.append(message)
-//            }
-//        }
-//        
-//        return messagesForGroup
-//        
-//    }
-//}
+    
+
+    var messages: Children<Group, Message> {
+        return children()
+    }
+
+}
+
