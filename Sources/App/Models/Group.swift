@@ -113,6 +113,12 @@ extension Group {
 }
 
 extension Group {
+    var users: Siblings<Group, ChatUser, Pivot<Group, ChatUser>> {
+        return siblings()
+    }
+}
+
+extension Group {
 //    func tilusers() throws -> [TILUser] {
 //        let tilusers: Siblings<TILUser> = try siblings()
 //        return try tilusers.all()

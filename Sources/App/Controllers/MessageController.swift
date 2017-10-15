@@ -37,14 +37,15 @@ final class MessageController {
         
         if user != nil {
         
-        //http://0.0.0.0:8080/messages/test/list
-            //http://0.0.0.0:8080/messages/test/list
-            //http://0.0.0.0:8080/messages/test/list
+
         if let group_param_id = request.parameters["group_id"]?.string {
             print("group_param_id: \(group_param_id)")
             
             let groupFromId = try Group.groupFor(name: group_param_id)
             self.group = groupFromId
+            
+            let users = try groupFromId.users.all()
+            
             
             print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
             
@@ -109,10 +110,7 @@ final class MessageController {
             return Response(redirect: "/chat/index")
         }
         
-        //return Response(redirect: redirectString)
         
-        //return Response(redirect: "/messages")
-        //    return group
     }
     
     
