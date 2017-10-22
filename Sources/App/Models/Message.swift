@@ -141,7 +141,7 @@ extension Message: Preparation {
             group.foreignKey("user_id", references: "id", on: ChatUser.self)
             group.parent(Group.self)
             group.parent(ChatUser.self)
-            //group.double("created")
+            group.double("created")
         })
     }
     

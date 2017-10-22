@@ -20,6 +20,7 @@ final class Group: Model {
     var name: String
     let storage = Storage()
     var id: Identifier?
+    
     init(name: String) {
         self.name = name
     }
@@ -108,25 +109,13 @@ extension Group: Preparation {
 
 
 extension Group {
-    
-    
-}
-
-extension Group {
     var users: Siblings<Group, ChatUser, Pivot<Group, ChatUser>> {
         return siblings()
     }
 }
 
 extension Group {
-//    func tilusers() throws -> [TILUser] {
-//        let tilusers: Siblings<TILUser> = try siblings()
-//        return try tilusers.all()
-//    }
-    
 
-    
-    
     var messages: Children<Group, Message> {
         
         return children()
