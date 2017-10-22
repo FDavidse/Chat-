@@ -19,16 +19,18 @@ final class Message: Model {
     let storage = Storage()
     var username: String = ""
     
-    init(messagetext: String, groupId: Identifier, userId: Identifier) throws {
+    init(messagetext: String, groupId: Identifier, userId: Identifier, username: String) throws {
         self.messagetext = messagetext
         self.groupId = groupId
         self.userId = userId
+        self.username = username
     }
     
     init(row: Row) throws {
         self.messagetext = try row.get("messagetext")
         self.groupId = try row.get("group_id")
         self.userId = try row.get("user_id")
+        self.username = try row.get("username")
 
     }
     
@@ -36,14 +38,15 @@ final class Message: Model {
         self.messagetext = try node.get("messagetext")
         self.groupId = try node.get("group_id")
         self.userId = try node.get("user_id")
+        self.username = try node.get("username")
 
     }
     
     
     
-    static func addMessage(text: String, group: Group?, user: ChatUser?) throws -> Message {
+    static func addMessage(text: String, group: Group?, user: ChatUser?, userName: String) throws -> Message {
         
-        let newMessage = try Message(messagetext: text, groupId: (group?.id)!, userId: (user?.id)!)
+        let newMessage = try Message(messagetext: text, groupId: (group?.id)!, userId: (user?.id)!, username: userName)
         try newMessage.save()
         return newMessage
     }
@@ -58,7 +61,8 @@ extension Message: JSONConvertible {
         try self.init(
             messagetext: json.get("messagetext"),
             groupId: json.get("group_id"),
-            userId: json.get("user_id")
+            userId: json.get("user_id"),
+            username: json.get("username")
         )
 
     }
@@ -73,6 +77,7 @@ extension Message: JSONRepresentable {
         try json.set("messagetext", messagetext)
         try json.set("group_id", groupId)
         try json.set("user_id", userId)
+        try json.set("username", username)
 
         return json
     }
@@ -111,6 +116,7 @@ extension Message: Preparation {
         try database.create(self, closure: { (group) in
             group.id()
             group.string("messagetext")
+            group.string("username")
             group.foreignKey("group_id", references: "id", on: Group.self)
             group.foreignKey("user_id", references: "id", on: ChatUser.self)
             group.parent(Group.self)

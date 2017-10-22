@@ -43,29 +43,29 @@
                 
                 let groupFromId = try Group.groupFor(name: group_param_id)
                 self.group = groupFromId
-                
-                let users = try groupFromId.users.all()
-                
-                
-                print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
-                
+     
                 let user = request.auth.authenticated(ChatUser.self)
+           
+                var groupsMessages = try groupFromId.messages.all()
+                         
+                for (i,_) in groupsMessages.enumerated() {
+                    groupsMessages.insert(groupsMessages.remove(at:i),at:0)
+                }
                 
-                
-                let groupsMessages = try groupFromId.messages.all()
-                
-                
+                for item in groupsMessages {
+                    print(item)
+                }
                 
                 
                 let parameters = try Node(node: [
+                    "currentgroup": groupFromId,
                     "messages": groupsMessages,
                     "authenticated": true,
                     "user": user!.makeNode(in: nil)
                     ])
                 
                 return try drop!.view.make("message", parameters)
-                
-                //return Response(redirect: "/messages/test/list")
+
                 
                 
             } else {
@@ -88,48 +88,33 @@
         }
         
         let user = request.auth.authenticated(ChatUser.self)
-        let newMessage = try Message.addMessage(text: text, group: self.group, user: user)
+        let newMessage = try Message.addMessage(text: text, group: self.group, user: user, userName: (user?.username)!)
         
         
         if user != nil {
-            
+
             if let thisGroup = self.group {
-                
-                let groupsMessages = try thisGroup.messages.all()
-                
-                var users: [ChatUser] = []
-                
-                for message in groupsMessages {
-                    
-                    let messageUser = try ChatUser.find(message.userId)
-                    users.append(messageUser!)
-                    message.username = (messageUser?.username)!
-                    
-                    
+
+                var groupsMessages = try thisGroup.messages.all()
+
+                for (i,_) in groupsMessages.enumerated() {
+                    groupsMessages.insert(groupsMessages.remove(at:i),at:0)
                 }
-                
-                
-                //find user based on id
-                
-                let messageUser = try ChatUser.find(1)
-                
-                
-                
                 let parameters = try Node(node: [
+                    "currentgroup": thisGroup,
                     "messages": groupsMessages,
                     "authenticated": true,
-                    "authors": users,
                     "user": user!.makeNode(in: nil)
                     ])
-                
+
                 return try drop!.view.make("message", parameters)
             } else {
-                return Response(redirect: "/messages")
+                return Response(redirect: "/messages/list")
             }
         } else {
             return Response(redirect: "/chat/index")
         }
-        
+
         
     }
     

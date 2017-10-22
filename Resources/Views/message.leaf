@@ -5,12 +5,12 @@
 <div class="row">
 <div class="u-full-width">
 #if(authenticated) {
-<h5>Welcome, #(user.email)</h5>
-<a class="button" href="/til/logout">Logout</a>
+<h5>Welcome, #(user.username)</h5>
+<a class="button" href="/chat/logout">Logout</a>
 <a class="button" href="/groups/list">Chat Groups</a>
 } ##else() {
-<a class="button" href="/til/login">Login</a>
-<a class="button" href="/til/register">Register</a>
+<a class="button" href="/chat/login">Login</a>
+<a class="button" href="/chat/register">Register</a>
 }
 </div>
 </div>
@@ -18,20 +18,19 @@
 #if(authenticated) {
 
 <div class="row">
-<div class="u-full-width">
-<h4>Type your message</h4>
-</div>
-</div>
+    <div class="u-full-width">
+        <h4>Your Conversation for Chat Group:</h4>
+        <p></p>
 
+        <h5>#(currentgroup.name)</h5>
+    </div>
+</div>
 
 <div class="row">
-<div class="u-full-width">
-<h4>Your Conversation for Chat Group</h4>
-<p></p>
-<h2>"#(currentgroup.name)"</h2>
+    <div class="u-full-width">
+        <h4>Type your message</h4>
+    </div>
 </div>
-</div>
-
 
 <form action="/messages" method="post">
     <div class="row">
@@ -65,7 +64,7 @@
 <h4>group Id</h4>
 </div>
 <div class="two columns">
-<h4>message Id</h4>
+<h4>User Name</h4>
 </div>
 <div class="two columns">
 <h4></h4>
@@ -81,18 +80,18 @@
     <div class="one columns">
         <p>&nbsp;</p>
     </div>
-<div class="two columns">
-<p><span>#(message.messagetext)</span><p>
-</div>
-<div class="three columns">
-<p><span>#(message.user_id)</span></p>
-</div>
-<div class="two columns">
-<p><span>#(message.group_id)</span></p>
-</div>
-<div class="four columns">
-<p><span>#(message.username)</span></p>
-</div>
+    <div class="two columns">
+        <p><span>#(message.messagetext)</span><p>
+    </div>
+    <div class="three columns">
+        <p><span>#(message.user_id)</span></p>
+    </div>
+    <div class="two columns">
+        <p><span>#(message.group_id)</span></p>
+    </div>
+    <div class="four columns">
+        <p><span>#(message.username)</span></p>
+    </div>
 </div>
 
 }

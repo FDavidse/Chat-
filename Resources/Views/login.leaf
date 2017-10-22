@@ -11,7 +11,7 @@
             <input class = "button-primary" type="submit" value="Login"/>
         </form>
 
-    <p>Not a user of CHAT! ? <a href = "?/chat/register">Register for CHAT!</a></p>
+    <p>Not a user of CHAT! ? <a href = "/chat/register">Register for CHAT!</a></p>
     </div>
 </div>
 

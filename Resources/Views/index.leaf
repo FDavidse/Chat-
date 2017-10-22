@@ -5,7 +5,7 @@
 <div class="row">
     <div class="u-full-width">
         #if(authenticated) {
-        <h5>Welcome, #(user.email)</h5>
+        <h5>Welcome, #(user.username)</h5>
         <a class="button" href="/chat/logout">Logout</a>
         <a class="button" href="/groups/list">Groups</a>
 
@@ -47,7 +47,8 @@
     </div>
 </form>
 -->
- 
+
+<!--
 <div class="row">
     <div class="u-full-width">
         #if(authenticated) {
@@ -58,23 +59,9 @@
         }
     </div>
 </div>
+-->
 
 
-#loop(acronyms, "acronym") {
-    <div class="row">
-        <div class="three columns">
-            <h5><span>#(acronym.short)</span></h5>
-        </div>
-        <div class="six columns">
-            <p><span>#(acronym.long)</span></p>
-        </div>
-        <div class="three columns">
-            <form action="/til/#(acronym.id)/delete" method="post">
-                <input type="submit" value="Delete"/>
-            </form>
-        </div>
-    </div>
-    }
 
     }
 
