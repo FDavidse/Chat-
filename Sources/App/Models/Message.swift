@@ -10,6 +10,7 @@ import Vapor
 import Fluent
 import FluentProvider
 import HTTP
+import Foundation
 
 final class Message: Model {
    
@@ -18,12 +19,14 @@ final class Message: Model {
     let userId: Identifier
     let storage = Storage()
     var username: String = ""
+    var created: Date
     
-    init(messagetext: String, groupId: Identifier, userId: Identifier, username: String) throws {
+    init(messagetext: String, groupId: Identifier, userId: Identifier, username: String, creationDate: Date) throws {
         self.messagetext = messagetext
         self.groupId = groupId
         self.userId = userId
         self.username = username
+        self.created = creationDate
     }
     
     init(row: Row) throws {
@@ -32,6 +35,9 @@ final class Message: Model {
         self.userId = try row.get("user_id")
         self.username = try row.get("username")
 
+        let createdTime: Double = try row.get("created")
+        self.created = Date(timeIntervalSince1970: createdTime)
+        
     }
     
     init(node: Node) throws {
@@ -39,14 +45,16 @@ final class Message: Model {
         self.groupId = try node.get("group_id")
         self.userId = try node.get("user_id")
         self.username = try node.get("username")
+        self.created = try node.get("created")
 
     }
     
     
     
-    static func addMessage(text: String, group: Group?, user: ChatUser?, userName: String) throws -> Message {
+    static func addMessage(text: String, group: Group?, user: ChatUser?, userName: String, date:Date) throws -> Message {
         
-        let newMessage = try Message(messagetext: text, groupId: (group?.id)!, userId: (user?.id)!, username: userName)
+        //let newMessage = try Message(messagetext: text, groupId: (group?.id)!, userId: (user?.id)!, username: userName)
+        let newMessage = try Message(messagetext: text, groupId: (group?.id)!, userId: (user?.id)!, username: userName, creationDate: date)
         try newMessage.save()
         return newMessage
     }
@@ -62,7 +70,8 @@ extension Message: JSONConvertible {
             messagetext: json.get("messagetext"),
             groupId: json.get("group_id"),
             userId: json.get("user_id"),
-            username: json.get("username")
+            username: json.get("username"),
+            creationDate: json.get("created")
         )
 
     }
@@ -78,6 +87,7 @@ extension Message: JSONRepresentable {
         try json.set("group_id", groupId)
         try json.set("user_id", userId)
         try json.set("username", username)
+        try json.set("created", created)
 
         return json
     }
@@ -91,6 +101,13 @@ extension Message: NodeRepresentable {
         try node.set("user_id", userId)
         try node.set("username", username)
         
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        dateFormatter.dateStyle = .full
+        dateFormatter.timeStyle = .none
+        let createdDate = dateFormatter.string(from: created)
+        try node.set("created", createdDate)
+       
         return node
     }
 }
@@ -98,11 +115,14 @@ extension Message: NodeRepresentable {
 
 extension Message: RowRepresentable {
     func makeRow() throws -> Row {
+        let createdTime = created.timeIntervalSince1970
+        
         var row = Row()
         try row.set("messagetext", messagetext)
         try row.set("group_id", groupId)
         try row.set("user_id", userId)
         try row.set("username", username)
+        try row.set("created", createdTime)
 
         return row
     }
@@ -121,6 +141,7 @@ extension Message: Preparation {
             group.foreignKey("user_id", references: "id", on: ChatUser.self)
             group.parent(Group.self)
             group.parent(ChatUser.self)
+            //group.double("created")
         })
     }
     
@@ -128,6 +149,7 @@ extension Message: Preparation {
         try database.delete(self)
     }
 }
+
 
 extension Message {
 

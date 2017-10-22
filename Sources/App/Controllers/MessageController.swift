@@ -1,7 +1,7 @@
  import Vapor
  import HTTP
  import Fluent
- 
+ import Foundation
  
  final class MessageController {
     var drop: Droplet? = nil
@@ -47,13 +47,9 @@
                 let user = request.auth.authenticated(ChatUser.self)
            
                 var groupsMessages = try groupFromId.messages.all()
-                         
+                
                 for (i,_) in groupsMessages.enumerated() {
                     groupsMessages.insert(groupsMessages.remove(at:i),at:0)
-                }
-                
-                for item in groupsMessages {
-                    print(item)
                 }
                 
                 
@@ -88,8 +84,9 @@
         }
         
         let user = request.auth.authenticated(ChatUser.self)
-        let newMessage = try Message.addMessage(text: text, group: self.group, user: user, userName: (user?.username)!)
+        let newMessage = try Message.addMessage(text: text, group: self.group, user: user, userName: (user?.username)!, date: Date.init())
         
+        //let timeString: String = String.ini
         
         if user != nil {
 

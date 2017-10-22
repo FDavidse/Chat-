@@ -146,13 +146,7 @@ final class GroupController {
                 }
             } else {
                 //problem getting attached info
-            }
-            
-            
-            
-            
-            
-            
+            }         
             
         } else {
             print("no group_param_id")
@@ -200,11 +194,7 @@ final class GroupController {
         //try group.delete()
         return Response(redirect: "/groups/list")
     }
-    
-//    func tilusersIndex(request: Request) throws -> ResponseRepresentable {
-////        let chatusers = try group.tilusers()
-////        return try JSON (node: chatusers.makeNode())
-//    }
+
     
 }
 
