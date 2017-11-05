@@ -102,9 +102,10 @@ extension Message: NodeRepresentable {
         try node.set("username", username)
         
         let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-        dateFormatter.dateStyle = .full
-        dateFormatter.timeStyle = .none
+//        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        dateFormatter.timeZone = TimeZone.current
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .full
         let createdDate = dateFormatter.string(from: created)
         try node.set("created", createdDate)
        

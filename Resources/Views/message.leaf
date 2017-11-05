@@ -54,20 +54,14 @@
     <div class="one columns">
         <p>&nbsp;</p>
     </div>
-<div class="two columns">
+<div class="five columns">
 <h4>message</h4>
 </div>
 <div class="three columns">
-<h4>message from</h4>
+<h4>Message Date</h4>
 </div>
-<div class="two columns">
-<h4>group Id</h4>
-</div>
-<div class="two columns">
-<h4>User Name</h4>
-</div>
-<div class="two columns">
-<h4></h4>
+<div class="three columns">
+<h4>From User</h4>
 </div>
 </div>
 
@@ -80,16 +74,13 @@
     <div class="one columns">
         <p>&nbsp;</p>
     </div>
-    <div class="two columns">
+    <div class="five columns">
         <p><span>#(message.messagetext)</span><p>
     </div>
     <div class="three columns">
-        <p><span>#(message.user_id)</span></p>
+        <p><span>#(message.created)</span></p>
     </div>
-    <div class="two columns">
-        <p><span>#(message.group_id)</span></p>
-    </div>
-    <div class="four columns">
+    <div class="three columns">
         <p><span>#(message.username)</span></p>
     </div>
 </div>
