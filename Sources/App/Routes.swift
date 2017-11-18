@@ -52,23 +52,23 @@ extension Droplet {
         
         authed.get("plaintext2") { req in
             print("trying to get plaintext")
-            let user = req.auth.authenticated(ChatUser.self)
+            //let user = req.auth.authenticated(ChatUser.self)
             let userOhter = try req.user()
-            if user != nil {
-                print("user name is \(user!.name)")
-            }
+//            if user != nil {
+//                print("user name is \(user!.name)")
+//            }
+//
+//            if let user3 = try ChatUser.find(1) {
+//                req.auth.authenticate(user3)
+//            }
+//
+//            print(req.auth.header)
+//            print(req.auth.header?.basic)
+//
+//
+//            let user4 = try req.auth.assertAuthenticated(ChatUser.self)
             
-            if let user3 = try ChatUser.find(1) {
-                req.auth.authenticate(user3)
-            }
-            
-            print(req.auth.header)
-            print(req.auth.header?.basic)
-            
-            
-            let user4 = try req.auth.assertAuthenticated(ChatUser.self)
-            
-            return "Hello, world!"
+            return userOhter
         }
 
       

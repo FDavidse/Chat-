@@ -7,42 +7,27 @@ import Sessions
 import Node
 
 
-final class ChatAppController {
+final class LoginController {
     
     var wrongLogin: Bool = false
     var drop: Droplet? = nil
     
     func addRoutes(drop: Droplet) {
-      
-        self.drop = drop
-//        
-//        let memory = MemorySessions()
-//        let sessionsMiddleware = SessionsMiddleware(memory)
-//        let persistMiddleware = PersistMiddleware(ChatUser.self)
-//        let passwordMiddleware = PasswordAuthenticationMiddleware(ChatUser.self)
-//
-//        let authed = drop.grouped([sessionsMiddleware, persistMiddleware, passwordMiddleware])
-        //authed.get("chat/index", handler: indexView)
-
-        let basic = drop.grouped("chat")
-        basic.get("/login", handler: loginView)
-        basic.get("/index", handler: indexView)
-
         
-        //basic.post(handler: addAcronym)
-        basic.get("/register", handler: registerView)
-        basic.post("/register", handler: register)
-        basic.get("/login", handler: loginView)
+        self.drop = drop
+        
+        let basic = drop.grouped("api")
+
         basic.post("/login", handler: login)
         basic.get("/logout", handler: logout)
-
+        
     }
     
-
-    func indexView(request: Request) throws -> ResponseRepresentable {
-
-       
     
+    func indexView(request: Request) throws -> ResponseRepresentable {
+        
+        
+        
         let user = request.auth.authenticated(ChatUser.self)
         
         var logginIn:Bool = true
@@ -50,7 +35,7 @@ final class ChatAppController {
         if user != nil {
             let node: Node = Node(emptyContext)
             print("user id is \(user!.id ?? "")")
-
+            
             let nodeContext : Context = node.context
             
             
@@ -67,19 +52,19 @@ final class ChatAppController {
             "user": userNode ,
             "wrongpassword": false
             ])
-            
+        
         
         
         return try drop!.view.make("index", parameters)
         
-    
+        
     }
-
+    
     func registerView(request: Request) throws -> ResponseRepresentable {
         return try self.drop!.view.make("register")
     }
     
- 
+    
     func register(request: Request) throws -> ResponseRepresentable {
         
         guard let email = request.formURLEncoded?["email"]?.string,
@@ -90,13 +75,13 @@ final class ChatAppController {
         let newUser = try ChatUser.register(name: name, username:name, email: email, rawPassword: password)
         
         //let hashedPassword = try ChatUser.passwordHasher.make(password)
-
+        
         request.auth.authenticate(newUser)
         
         //let credentials = UsernamePassword(username: email, password: password)
         
         let passwordCredentials = Password(username: email.lowercased(), password: password)
-
+        
         do {
             let user = try ChatUser.authenticate(passwordCredentials)
             request.auth.authenticate(user)
@@ -108,9 +93,9 @@ final class ChatAppController {
         }
         catch {
             print("failure creating user, or something")
-
+            
             return Response(redirect: "/chat/index")
-
+            
         }
     }
     
@@ -126,15 +111,20 @@ final class ChatAppController {
                 return Response(redirect: "/chat")
         }
         let passwordCredentials = Password(username: email.lowercased(), password: password)
-
+        
         do {
             let user = try ChatUser.authenticate(passwordCredentials)
             try request.auth.authenticate(user)
             
             //to check if we have an authenticated user now
             let userLoggedIn = request.auth.authenticated(ChatUser.self)
-            return Response(redirect: "/chat/index")
            
+            let token = try Token.setTokenfor(user: user)
+            
+            //try token.save()
+            
+            return token
+            
         } catch {
             //return e.description
             self.wrongLogin = true
@@ -151,8 +141,9 @@ final class ChatAppController {
         //try request.auth.logout()
         return Response(redirect: "/chat/index")
     }
- 
-
+    
+    
     
     
 }
+

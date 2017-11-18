@@ -52,8 +52,7 @@ final class Message: Model {
     
     
     static func addMessage(text: String, group: Group?, user: ChatUser?, userName: String, date:Date) throws -> Message {
-        
-        //let newMessage = try Message(messagetext: text, groupId: (group?.id)!, userId: (user?.id)!, username: userName)
+
         let newMessage = try Message(messagetext: text, groupId: (group?.id)!, userId: (user?.id)!, username: userName, creationDate: date)
         try newMessage.save()
         return newMessage
@@ -92,6 +91,8 @@ extension Message: JSONRepresentable {
         return json
     }
 }
+
+extension Message: ResponseRepresentable { }
 
 extension Message: NodeRepresentable {
     func makeNode(in context: Context?) throws -> Node {
