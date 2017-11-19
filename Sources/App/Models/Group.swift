@@ -51,6 +51,19 @@ final class Group: Model {
             throw Abort.badRequest
         }
     }
+    
+    static func groupFor(id : String) throws -> Group {
+        let groups = try Group.makeQuery().filter("id", .equals, id)
+        
+        let group = try groups.first()
+        
+        if let foundGroup = group {
+            return foundGroup
+        } else {
+            throw Abort.badRequest
+        }
+    }
+
 
     
 }

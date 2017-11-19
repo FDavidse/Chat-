@@ -2,6 +2,8 @@
  import HTTP
  import Fluent
  import Foundation
+ import AuthProvider
+
  
  final class MessageController {
     var drop: Droplet? = nil
@@ -24,11 +26,55 @@
         
         
         
-        
-        
+        let tokenMiddleWare = TokenAuthenticationMiddleware(ChatUser.self)
+        let authed = drop.grouped(tokenMiddleWare)
+        authed.get("messages/all", handler: allMessages)
+        authed.get("messages/user-all-for-group", handler: allUserMessages)
+
         
         
     }
+    
+    
+    //MARK: - all routes for external API requests
+    func allUserMessages(request: Request) throws -> ResponseRepresentable {
+        
+        let authedUser = try request.user()
+        let groups = try authedUser.userGroups()
+        
+        let groupId = request.data["group_id"]?.string
+        
+        
+        if let groupId = groupId {
+        
+            let group = try Group.groupFor(id: groupId)
+            let mess = try group.messages.all()
+            
+            return try mess.makeJSON()
+            
+        } else {
+            
+            return "Not Found".makeResponse()
+
+        }
+
+        
+    }
+    
+    func allMessages(request: Request) throws -> ResponseRepresentable {
+        
+        
+        let allMessages = try Message.all()
+        
+        return try allMessages.makeJSON()
+        
+    }
+    
+    
+    
+    
+    
+    //MARK: - all routes for web app
     
     
     func indexView(request: Request) throws -> ResponseRepresentable {

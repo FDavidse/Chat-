@@ -1,6 +1,7 @@
 import Vapor
 import HTTP
 import Fluent
+import AuthProvider
 
 
 final class GroupController {
@@ -19,11 +20,36 @@ final class GroupController {
         //basic.delete(Group.self, handler: delete)
         basic.post(Group.parameter, "joingroup", handler: joinGroupView)
         basic.post(Group.parameter, "leavegroup", handler: leaveGroupView)
+        
+        let tokenMiddleWare = TokenAuthenticationMiddleware(ChatUser.self)
+        let authed = drop.grouped(tokenMiddleWare)
+        authed.get("groups/user-all", handler: allUserGroups)
+        authed.get("groups/all", handler: allGroups)
+
+    }
+
+    //MARK: - all routes for external API requests
+    func allUserGroups(request: Request) throws -> ResponseRepresentable {
+        
+        let authedUser = try request.user()
+        let groups = try authedUser.groups.all()
+        
+        return try groups.makeJSON()
+        
     }
     
-//    func index(request: Request) throws -> ResponseRepresentable {
-//        //return try JSON(node: Group.all().makeNode())
-//    }
+    func allGroups(request: Request) throws -> ResponseRepresentable {
+        
+        let groups = try Group.all()
+        
+        return try groups.makeJSON()
+        
+    }
+    
+    
+    
+    
+    //MARK: - all routes for web app
     
     func indexView(request: Request) throws -> ResponseRepresentable {
         
@@ -95,6 +121,7 @@ final class GroupController {
         }
     }
     
+   
     func create(request: Request) throws -> ResponseRepresentable {
         
         guard let name = request.data["name"]?.string else {
