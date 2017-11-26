@@ -11,6 +11,7 @@ final class GroupController {
         
         self.drop = drop
 
+        //Web app routes
         let basic = drop.grouped("groups")
         //basic.get(handler: index)
         basic.get("list", handler: indexView)
@@ -21,10 +22,15 @@ final class GroupController {
         basic.post(Group.parameter, "joingroup", handler: joinGroupView)
         basic.post(Group.parameter, "leavegroup", handler: leaveGroupView)
         
+        //API routes
         let tokenMiddleWare = TokenAuthenticationMiddleware(ChatUser.self)
         let authed = drop.grouped(tokenMiddleWare)
-        authed.get("groups/user-all", handler: allUserGroups)
-        authed.get("groups/all", handler: allGroups)
+        authed.get("api/groups/user-all", handler: allUserGroups)
+        authed.get("api/groups/all", handler: allGroups)
+        authed.post("api/groups/add-group", handler: insertNewGroup)
+        authed.post("api/groups/join-group", handler: joinGroup)
+        authed.post("api/groups/leave-group", handler: leaveGroup)
+        authed.post("api/groups/delete-group", handler: deleteGroup)
 
     }
 
@@ -46,8 +52,77 @@ final class GroupController {
         
     }
     
+    func insertNewGroup(request: Request) throws -> ResponseRepresentable {
+        
+        guard let name = request.data["name"]?.string else {
+            throw Abort.badRequest
+        }
+        
+        let newGroup = try Group.addGroup(name: name)
+        
+        return try newGroup.makeJSON()
+        
+    }
     
+    func joinGroup(request: Request) throws -> ResponseRepresentable {
+
+        if let group_param_id = request.data["group_id"]?.string {
+
+            let groupFromId = try Group.groupFor(id: group_param_id)
+
+            let authedUser = try request.user()
+            let attached = try authedUser.groups.isAttached(groupFromId)
+            if attached == true {
+                //already member of group
+                return Response(status: .notFound)
+            } else {
+                //add it
+                try authedUser.groups.add(groupFromId)
+                return try groupFromId.makeJSON()
+            }
+            
+            
+        } else {
+            print("no group_param_id")
+            throw Abort.badRequest
+        }
+        
+    }
     
+    func leaveGroup(request: Request) throws -> ResponseRepresentable {
+        
+        if let group_param_id = request.parameters["group_id"]?.string {
+            print("group_param_id: \(group_param_id)")
+            
+            let groupFromId = try Group.groupFor(name: group_param_id)
+            
+            print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
+            let user = try request.user()
+            
+            do {
+                try user.groups.remove(groupFromId)
+                return try groupFromId.makeJSON()
+            } catch {
+                return Response(status: .notFound)
+            }
+            
+            
+        } else {
+            print("no group_param_id")
+            throw Abort.badRequest
+        }
+      
+    }
+    
+    func deleteGroup(request: Request, group: Group) throws -> ResponseRepresentable {
+        do {
+            try group.delete()
+            return Response(status: .ok)
+        } catch {
+            throw Abort.badRequest
+        }
+    }
+
     
     //MARK: - all routes for web app
     
