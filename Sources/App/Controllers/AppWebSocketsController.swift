@@ -3,6 +3,8 @@ import HTTP
 import Fluent
 import Foundation
 
+let messageReceived     = "messageReceived"
+
 final class AppWebSocketsController {
     
     let room = Room()
@@ -22,6 +24,9 @@ final class AppWebSocketsController {
             
             ws.onText = { ws, text in
                 print("Text received: \(text)")
+                
+//                NotificationCenter.default.post(name: Notification.Name(messageReceived), object: nil)
+
                 
                 let json = try JSON(bytes: Array(text.utf8))
                 

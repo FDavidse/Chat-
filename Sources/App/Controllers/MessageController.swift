@@ -137,9 +137,7 @@
         
         let user = request.auth.authenticated(ChatUser.self)
         let newMessage = try Message.addMessage(text: text, group: self.group, user: user, userName: (user?.username)!, date: Date.init())
-        
-        //let timeString: String = String.ini
-        
+       
         if user != nil {
 
             if let thisGroup = self.group {
@@ -156,6 +154,7 @@
                     "user": user!.makeNode(in: nil)
                     ])
 
+                NotificationCenter.default.post(name: Notification.Name(messageReceived), object: nil)
                 return try drop!.view.make("message", parameters)
             } else {
                 return Response(redirect: "/messages/list")

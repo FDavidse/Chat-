@@ -9,6 +9,7 @@
 import Vapor
 import FluentProvider
 import HTTP
+import Foundation
 
 class Room {
     var connections: [String: WebSocket]
@@ -40,5 +41,16 @@ class Room {
     
     init() {
         connections = [:]
+         NotificationCenter.default.addObserver(self, selector: #selector(self.methodOfReceivedNotification(notification:)), name: Notification.Name(messageReceived), object: nil)
+        
+    }
+    
+    @objc func methodOfReceivedNotification(notification: Notification){
+        
+        do {
+            try send(name: "chat app", message: "new messages received")
+        } catch {
+            print("failure sending based on notification")
+        }
     }
 }
