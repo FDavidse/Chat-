@@ -29,9 +29,9 @@ class Room {
         
         
         for (username, socket) in connections {
-            guard username != name else {
-                continue
-            }
+//            guard username != name else {
+//                continue
+//            }
             
             try socket.send(str)
         }

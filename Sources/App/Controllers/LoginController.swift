@@ -123,7 +123,12 @@ final class LoginController {
             
             //try token.save()
             
-            return token
+            
+            var json = try token.makeJSON()
+            try json.set("user_name", user.username)
+
+            return json
+            
             
         } catch {
             //return e.description

@@ -17,7 +17,7 @@ final class GroupController {
         basic.get("list", handler: indexView)
         basic.post(handler: create)
         basic.post("createNewGroup", handler: createNewGroup)
-        basic.post("delete", Group.parameter, handler: deleteGroup)
+        basic.post("delete", Group.parameter, handler: deleteGroupView)
         //basic.delete(Group.self, handler: delete)
         basic.post(Group.parameter, "joingroup", handler: joinGroupView)
         basic.post(Group.parameter, "leavegroup", handler: leaveGroupView)
@@ -91,12 +91,12 @@ final class GroupController {
     
     func leaveGroup(request: Request) throws -> ResponseRepresentable {
         
-        if let group_param_id = request.parameters["group_id"]?.string {
+        if let group_param_id = request.data["group_id"]?.string {
             print("group_param_id: \(group_param_id)")
             
-            let groupFromId = try Group.groupFor(name: group_param_id)
+            let groupFromId = try Group.groupFor(id: group_param_id)
             
-            print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
+            print("group to leave has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
             let user = try request.user()
             
             do {
@@ -114,13 +114,25 @@ final class GroupController {
       
     }
     
-    func deleteGroup(request: Request, group: Group) throws -> ResponseRepresentable {
-        do {
-            try group.delete()
-            return Response(status: .ok)
-        } catch {
+    func deleteGroup(request: Request) throws -> ResponseRepresentable {
+        if let group_param_id = request.data["group_id"]?.string {
+            print("group_param_id: \(group_param_id)")
+            
+            let groupFromId = try Group.groupFor(id: group_param_id)
+           
+            do {
+                try groupFromId.delete()
+                return try groupFromId.makeJSON()
+            } catch {
+                return Response(status: .notFound)
+            }
+            
+            
+        } else {
+            print("no group_param_id")
             throw Abort.badRequest
         }
+        
     }
 
     
@@ -222,22 +234,14 @@ final class GroupController {
     }
     
     func joinGroupView(request: Request) throws -> ResponseRepresentable {
-        
-//        var pivot = try Pivot<ChatUser, Group>(chatuser, group)
-//        try pivot.save()
-        //return tiluser
-        
+    
               
         let params = request.parameters
         
         if let group_param_id = request.parameters["group_id"]?.string {
-            print("group_param_id: \(group_param_id)")
-            //let joinedGroup = Group.groupFor(group_param_id)
             
             let groupFromId = try Group.groupFor(name: group_param_id)
-            
-            print("group to join has name: \(groupFromId.name) and id: \(groupFromId.id ?? "1000")")
-            
+
             let user = request.auth.authenticated(ChatUser.self)
             if let attached = try user?.groups.isAttached(groupFromId) {
                 if attached {
@@ -292,7 +296,7 @@ final class GroupController {
         return JSON([:])
     }
     
-    func deleteGroup(request: Request) throws -> ResponseRepresentable {
+    func deleteGroupView(request: Request) throws -> ResponseRepresentable {
         //try group.delete()
         return Response(redirect: "/groups/list")
     }

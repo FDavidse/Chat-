@@ -16,7 +16,7 @@ final class AppWebSocketsController {
             try background {
                 while ws.state == .open {
                     try? ws.ping()
-                    drop.console.wait(seconds: 10) // every 10 seconds
+                    drop.console.wait(seconds: 5) // every 5 seconds
                 }
             }
             
@@ -26,16 +26,14 @@ final class AppWebSocketsController {
                 let json = try JSON(bytes: Array(text.utf8))
                 
                 
-                print("json !")
-                
-                if let u = json.object?["username"]?.string {
+                if let u = json.object?["userName"]?.string {
                     username = u
                     self.room.connections[u] = ws
                     try self.room.bot("\(u) has joined. 👋")
                 } else{
-                    username = "filip"
+                    username = "new user"
                     self.room.connections[username!] = ws
-                    try self.room.bot("\(String(describing: username)) has joined. 👋")
+                    //try self.room.bot("\(String(describing: username)) has joined. 👋")
                 }
                 
                 if let u = username, let m = json.object?["message"]?.string {
@@ -46,11 +44,13 @@ final class AppWebSocketsController {
                 
                 //reverse the characters and send back
                 let rev = String(text.characters.reversed())
-                try ws.send(rev)
+                //try ws.send(rev)
             }
             
             ws.onClose = { ws, code, reason, clean in
-                print("Closed.")
+                print("Closed. reason being \(reason ??  "")")
+                guard let user = username else { return }
+                self.room.connections.removeValue(forKey: user)
             }
         }
         

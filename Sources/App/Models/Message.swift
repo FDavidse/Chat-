@@ -103,7 +103,6 @@ extension Message: NodeRepresentable {
         try node.set("username", username)
         
         let dateFormatter = DateFormatter()
-//        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         dateFormatter.timeZone = TimeZone.current
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .full

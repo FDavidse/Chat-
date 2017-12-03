@@ -221,40 +221,4 @@ protocol PasswordHasherVerifier: PasswordVerifier, HashProtocol {}
 extension BCryptHasher: PasswordHasherVerifier {}
 
 
-//extension TILUser: Authenticator {
-//    
-//    static func authenticate(credentials: Credentials) throws -> User {
-//        var user: TILUser?
-//        
-//        switch credentials {
-//        case let credentials as UsernamePassword:
-//            let fetchedUser = try TILUser.query()
-//                .filter("email", credentials.username)
-//                .first()
-//            if let password = fetchedUser?.password,
-//                password != "",
-//                (try? BCrypt.verify(password: credentials.password, matchesHash: password)) == true {
-//                user = fetchedUser
-//            }
-//        case let credentials as Identifier:
-//            user = try TILUser.find(credentials.id)
-//        default:
-//            throw UnsupportedCredentialsError()
-//        }
-//        
-//        if let user = user {
-//            return user
-//        } else {
-//            throw IncorrectCredentialsError()
-//        }
-//        
-//    }
-//    
-//    static func register(credentials: Credentials) throws -> User {
-//        throw Abort.badRequest
-//    }
-//    
-//    
-//}
-//
 

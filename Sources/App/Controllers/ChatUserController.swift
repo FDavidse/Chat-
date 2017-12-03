@@ -9,9 +9,7 @@ final class ChatUserController {
         basic.get(handler: index)
         basic.post(handler: create)
         basic.delete("delete", ChatUser.parameter, handler: delete)
-//        basic.get(ChatUser.self, "acronyms", handler: acronymsIndex)
-//        basic.post(ChatUser.self, "join", Group.self, handler: joinGroup)
-//        basic.get(ChatUser.self, "groups", handler: groupsIndex)
+
     }
     
     func index(request: Request) throws -> ResponseRepresentable {
@@ -47,22 +45,7 @@ final class ChatUserController {
         return JSON([:])
     }
     
-//    func acronymsIndex(request: Request, ChatUser: ChatUser) throws -> ResponseRepresentable {
-//        let children = try ChatUser.acronyms()
-//        return try JSON(node: children.makeNode())
-//    }
-    
-//    func joinGroup(request: Request, ChatUser: ChatUser, group: Group) throws -> ResponseRepresentable {
-//        var pivot = Pivot<ChatUser, Group>(ChatUser, group)
-//        try pivot.save()
-//        return ChatUser
-//    }
-//    
-//    func groupsIndex(request: Request, ChatUser: ChatUser) throws -> ResponseRepresentable {
-//        let groups = try ChatUser.groups()
-//        return try JSON (node: groups.makeNode())
-//    }
-    
+
 }
 
 
