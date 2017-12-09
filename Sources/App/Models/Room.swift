@@ -28,7 +28,7 @@ class Room {
         
         let str = String(describing: json)
         
-        
+        NotificationCenter.default.post(name: Notification.Name(messageReceivedFromIOS), object: nil)
         for (username, socket) in connections {
 //            guard username != name else {
 //                continue

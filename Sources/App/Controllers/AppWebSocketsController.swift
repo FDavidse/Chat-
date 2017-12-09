@@ -3,7 +3,8 @@ import HTTP
 import Fluent
 import Foundation
 
-let messageReceived     = "messageReceived"
+let messageReceived            = "messageReceived"
+let messageReceivedFromIOS     = "messageReceivedFromIOS "
 
 final class AppWebSocketsController {
     

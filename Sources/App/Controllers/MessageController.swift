@@ -27,6 +27,19 @@
         authed.get("api/messages/user-all-for-group", handler: allUserMessages)
         authed.post("api/messages/add-message", handler: writeMessage)
       
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(respondTo(notification:)), name: Notification.Name(messageReceivedFromIOS), object: nil)
+        
+    }
+    
+    @objc func respondTo(notification: Notification) {
+        receivedNotification(notification: notification)
+    }
+    
+    
+    func receivedNotification(notification: Notification) -> ResponseRepresentable{
+        print("received notification: trying to redirect to messages list")
+        return Response(redirect: "/messages/list")
     }
     
     
